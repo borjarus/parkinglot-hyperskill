@@ -4,7 +4,11 @@ files:
     visible: true
     learner_created: false
   - name: test/ParkingTest.kt
+    visible: true
     learner_created: false
 feedback_link: https://hyperskill.org/projects/75/stages/417/implement#comment
-status: Failed
+status: Solved
+feedback:
+  message: Congratulations!
+  time: "Thu, 08 Jan 2026 10:09:00 UTC"
 record: 1

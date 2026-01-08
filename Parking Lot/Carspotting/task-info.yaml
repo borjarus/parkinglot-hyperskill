@@ -4,6 +4,7 @@ files:
     visible: true
     learner_created: false
   - name: test/ParkingTest.kt
+    visible: true
     learner_created: false
 feedback_link: https://hyperskill.org/projects/75/stages/420/implement#comment
 status: Unchecked
