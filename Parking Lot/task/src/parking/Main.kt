@@ -10,43 +10,36 @@ fun main() {
         .forEach { processCommand(it) }
 }
 
-fun handlePark(args: List<String>): Unit {
-    spots ?: run {
+fun checkIfParkingExists(action: (Array<Car?>) -> Unit) {
+    if (spots == null) {
         println("Sorry, a parking lot has not been created.")
-        return
+    } else {
+        action(spots!!)
     }
+}
 
+fun handlePark(args: List<String>): Unit = checkIfParkingExists { parkingSpots ->
     val (regNumber, color) = args
-    val emptySpot = spots!!.indexOfFirst { it == null }
+    val emptySpot = parkingSpots.indexOfFirst { it == null }
     when {
         emptySpot != -1 -> {
-            spots!![emptySpot] = Car(regNumber, color)
+            parkingSpots[emptySpot] = Car(regNumber, color)
             println("$color car parked in spot ${emptySpot + 1}.")
         }
         else -> println("Sorry, the parking lot is full.")
     }
 }
 
-fun handleLeave(spotNumber: Int): Unit {
-    spots ?: run {
-        println("Sorry, a parking lot has not been created.")
-        return
-    }
-
+fun handleLeave(spotNumber: Int) = checkIfParkingExists { parkingSpots ->
     val index = spotNumber - 1
-    spots!![index]?.let {
-        spots!![index] = null
+    parkingSpots[index]?.let {
+        parkingSpots[index] = null
         println("Spot $spotNumber is free.")
     } ?: println("There is no car in spot $spotNumber.")
 }
 
-fun handleStatus(): Unit {
-    spots ?: run {
-        println("Sorry, a parking lot has not been created.")
-        return
-    }
-
-    val occupiedSpots = spots!!
+fun handleStatus() = checkIfParkingExists { parkingSpots ->
+    val occupiedSpots = parkingSpots
         .mapIndexedNotNull { index, car ->
             car?.let { "${index + 1} ${it.regNumber} ${it.color}" }
         }
@@ -54,6 +47,39 @@ fun handleStatus(): Unit {
     occupiedSpots.takeIf { it.isNotEmpty() }
         ?.forEach { println(it) }
         ?: println("Parking lot is empty.")
+}
+
+fun handleRegNumberByColor(colorQuery: String) = checkIfParkingExists { parkingSpots ->
+    val result = parkingSpots
+        .mapNotNull { car -> car?.takeIf { it.color.equals(colorQuery, true) }?.regNumber }
+
+    if (result.isEmpty()) {
+        println("No cars with color ${colorQuery.uppercase()} were found.")
+    } else  {
+        println(result.joinToString(", "))
+    }
+}
+
+fun handleSpotByColor(colorQuery: String) = checkIfParkingExists { parkingSpots ->
+    val result = parkingSpots
+        .mapIndexedNotNull { index, car ->
+            car?.takeIf { it.color.equals(colorQuery, true) }?.let { index + 1}
+        }
+
+    if (result.isEmpty()) {
+        println("No cars with color ${colorQuery.uppercase()} were found.")
+    } else  {
+        println(result.joinToString(", "))
+    }
+}
+
+fun handleSpotByRegNumber(regNumberQuery: String) = checkIfParkingExists { parkingSpots ->
+    val index = parkingSpots.indexOfFirst { it?.regNumber == regNumberQuery }
+    if (index == -1) {
+        println("No cars with registration number $regNumberQuery were found.")
+    } else  {
+        println(index + 1)
+    }
 }
 
 fun processCommand(input: List<String>): Unit {
@@ -66,5 +92,9 @@ fun processCommand(input: List<String>): Unit {
         "park" -> handlePark(input.drop(1))
         "leave" -> handleLeave(input[1].toInt())
         "status" -> handleStatus()
+        "reg_by_color" -> handleRegNumberByColor(input[1])
+        "spot_by_color" -> handleSpotByColor(input[1])
+        "spot_by_reg" -> handleSpotByRegNumber(input[1])
     }
 }
+
