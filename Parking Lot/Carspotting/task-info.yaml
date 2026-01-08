@@ -1,0 +1,10 @@
+type: edu
+files:
+  - name: src/parking/Main.kt
+    visible: true
+    learner_created: false
+  - name: test/ParkingTest.kt
+    learner_created: false
+feedback_link: https://hyperskill.org/projects/75/stages/420/implement#comment
+status: Unchecked
+record: -1
